@@ -35,9 +35,25 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', atualizarHeader, { passive: true });
 
   /* --- 3) Revelar elementos ao entrar na tela --------------------------- */
+  const seletoresRevelaveis = [
+    '.hero__eyebrow',
+    '.hero__text',
+    '.hero__visual',
+    '.section-head',
+    '.tratamento',
+    '.experiencia__conteudo',
+    '.sobre__visual',
+    '.sobre__texto',
+    '.cta-final__conteudo',
+    '.contato__bloco',
+    '.footer'
+  ].join(', ');
+  document.querySelectorAll(seletoresRevelaveis).forEach((el) => el.setAttribute('data-reveal', ''));
   const elementosRevelaveis = document.querySelectorAll('[data-reveal]');
+  const reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if ('IntersectionObserver' in window && elementosRevelaveis.length) {
+  if (!reduzirMovimento && 'IntersectionObserver' in window && elementosRevelaveis.length) {
+    document.documentElement.classList.add('reveal-ready');
     const observador = new IntersectionObserver(
       (entradas) => {
         entradas.forEach((entrada) => {
@@ -47,12 +63,12 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
     );
 
     elementosRevelaveis.forEach((el) => observador.observe(el));
   } else {
-    // navegadores sem suporte: mostra tudo direto, sem animação
+    // navegadores sem suporte ou com movimento reduzido mostram tudo direto
     elementosRevelaveis.forEach((el) => el.classList.add('is-visible'));
   }
 
